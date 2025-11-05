@@ -34,7 +34,12 @@
       "Bash(npm install:*)",
       "Bash(npm test:*)",
       "Bash(urls.py)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(findstr:*)",
+      "Bash(more:*)",
+      "Bash(awk:*)",
+      "Bash(find:*)",
+      "Skill(data-orchestrator)"
     ],
     "deny": [],
     "ask": []
