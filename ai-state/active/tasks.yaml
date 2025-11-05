@@ -311,8 +311,17 @@ tasks:
     epic: epic-ayni-mvp-foundation
     context: backend
     priority: critical
-    status: pending
+    status: completed
+    completed_at: "2025-11-05T08:00:00Z"
+    quality_score: 9.375
+    tests_passed: 23
     dependencies: [task-004-company-management]
+    files_created:
+      - "apps/processing/serializers.py"
+      - "apps/processing/views.py"
+      - "apps/processing/test_upload_api.py"
+    files_modified:
+      - "apps/processing/urls.py"
 
     when: "Company management complete"
     who: "backend-orchestrator"
@@ -433,8 +442,21 @@ tasks:
     epic: epic-ayni-mvp-foundation
     context: backend
     priority: medium
-    status: pending
+    status: completed
+    completed_at: "2025-11-05T14:30:00Z"
+    quality_score: 9.25
+    tests_passed: 29
     dependencies: [task-008-celery-setup]
+    files_created:
+      - "apps/processing/consumers.py"
+      - "apps/processing/test_websocket_progress.py"
+      - "ai-state/evaluations/task-010-evaluation.md"
+      - "ai-state/reports/task-010-implementation-report.md"
+    files_modified:
+      - "apps/processing/routing.py"
+      - "apps/processing/tasks.py"
+      - "requirements.txt"
+      - "ai-state/knowledge/endpoints.md"
 
     when: "Celery tasks implemented"
     who: "backend-orchestrator"

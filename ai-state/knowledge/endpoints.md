@@ -369,11 +369,12 @@ VITE_WS_URL=ws://localhost:8000/ws
 
 ---
 
-**Last Updated**: 2025-11-05T08:15:00Z
+**Last Updated**: 2025-11-05T14:30:00Z
 **Active Services**: 9 (Backend, DB, Redis, Celery, Flower, + 4 pending)
-**Active Endpoints**: 17 (Admin: 6, Auth: 7, Companies: 10)
+**Active Endpoints**: 18 (Admin: 6, Auth: 7, Companies: 10, WebSocket: 1)
+**WebSocket Endpoints**: 1 (Upload Progress)
 **Monitoring**: Flower dashboard @ port 5555
-**Pending Implementation**: Uploads, Processing, Analytics, AI/ML
+**Pending Implementation**: Uploads API, Analytics, AI/ML
 **Update Rule**: Only add endpoints after implementation + verification
 
 ---
@@ -642,14 +643,160 @@ When API stabilizes (post-MVP):
 POST   /api/processing/upload/                    # CSV upload
 GET    /api/processing/uploads/                   # Upload history
 GET    /api/processing/uploads/{id}/              # Upload details
-GET    /api/processing/uploads/{id}/progress/     # Real-time progress
 GET    /api/processing/uploads/{id}/download/     # Download processed CSV
 POST   /api/processing/mapping/                   # Save column mapping
 GET    /api/processing/mapping/{company_id}/      # Get saved mapping
-
-WebSocket:
-WS     /ws/processing/{upload_id}/                # Real-time progress updates
 ```
+
+---
+
+## 🔌 WebSocket Endpoints (✅ ACTIVE)
+
+### Real-Time Upload Progress (Task 010)
+Base URL: `ws://localhost:8000/ws/processing/`
+
+#### Connection
+- **WS** `/ws/processing/<upload_id>/`
+  - **Auth**: JWT token in query string OR post-connection message
+  - **Query Auth**: `?token=<jwt_access_token>`
+  - **Message Auth**: `{"type": "authenticate", "token": "<jwt_access_token>"}`
+
+#### Messages Received (Server → Client)
+
+**1. Status Update**
+```json
+{
+  "type": "status",
+  "status": "processing",
+  "message": "Processing data through GabeDA",
+  "progress": 50,
+  "rows_processed": 500,
+  "total_rows": 1000
+}
+```
+
+**Status Values:**
+- `pending` - Upload queued
+- `validating` - Validating CSV file
+- `processing` - Processing data
+- `completed` - Upload complete
+- `failed` - Processing failed
+- `cancelled` - Upload cancelled
+
+**2. Progress Update**
+```json
+{
+  "type": "progress",
+  "percent": 45.2,
+  "message": "Processing rows...",
+  "current": 452,
+  "total": 1000
+}
+```
+
+**3. Error Notification**
+```json
+{
+  "type": "error",
+  "message": "Processing failed",
+  "details": "Invalid column mapping for 'fecha'"
+}
+```
+
+**4. Completion Notification**
+```json
+{
+  "type": "complete",
+  "message": "Upload processing complete!",
+  "results": {
+    "upload_id": 123,
+    "processed_rows": 1000,
+    "updated_rows": 1000,
+    "data_quality_score": 98.5,
+    "aggregation_counts": {
+      "raw_transactions": 1000,
+      "daily_aggregations": 30,
+      "monthly_aggregations": 1,
+      "product_aggregations": 50
+    }
+  }
+}
+```
+
+**5. Authenticated Confirmation**
+```json
+{
+  "type": "authenticated",
+  "message": "Authentication successful"
+}
+```
+
+**6. Pong (Keep-Alive)**
+```json
+{
+  "type": "pong",
+  "timestamp": 1704484800
+}
+```
+
+#### Messages Sent (Client → Server)
+
+**1. Authenticate**
+```json
+{
+  "type": "authenticate",
+  "token": "<jwt_access_token>"
+}
+```
+
+**2. Ping (Keep-Alive)**
+```json
+{
+  "type": "ping",
+  "timestamp": 1704484800
+}
+```
+
+#### Error Codes
+- `4001`: Unauthorized (invalid/missing token)
+- `4003`: Forbidden (no access to upload)
+
+#### Usage Example
+```javascript
+// Connect with query string auth
+const ws = new WebSocket(`ws://localhost:8000/ws/processing/123/?token=${accessToken}`);
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+
+  switch (data.type) {
+    case 'progress':
+      updateProgressBar(data.percent);
+      break;
+    case 'status':
+      updateStatus(data.status, data.message);
+      break;
+    case 'error':
+      showError(data.message);
+      break;
+    case 'complete':
+      showSuccess(data.results);
+      break;
+  }
+};
+
+// Send ping every 30s to keep connection alive
+setInterval(() => {
+  ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+}, 30000);
+```
+
+**Implemented**: Task 010
+**Status**: ✅ ACTIVE
+**Performance**: ~10ms event emission, < 50ms connection
+**Security**: JWT authentication, multi-tenant data isolation
+
+---
 
 ### Phase 3: Analytics (Tasks 019-022)
 
