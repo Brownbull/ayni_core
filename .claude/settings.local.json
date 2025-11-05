@@ -33,7 +33,8 @@
       "Bash(mkdir:*)",
       "Bash(npm install:*)",
       "Bash(npm test:*)",
-      "Bash(urls.py)"
+      "Bash(urls.py)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []
