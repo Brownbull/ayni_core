@@ -55,4 +55,4 @@ archive/
 ai-state/operations.log
 ai-state/active/*/tasks/*
 tailwind_templates/
-!operations.log
+!operations.log# Test documentation is tracked\n!ai-state/active/tests/

@@ -71,17 +71,19 @@ Test Requirements (all must pass):
 Instructions:
 1. Read the standard: ai-state/standards/frontend-standard.md
 2. Implement the feature following the standard
-3. Write all 8 test types
+3. Write all 8 test types (TDD approach)
 4. Self-evaluate against 8 quality metrics (must be >= 8.0/10)
 5. If score < 8.0, refine and re-evaluate
 6. Update task status to "completed"
-7. Log completion event to ai-state/operations.log
+7. **Create test documentation in ai-state/active/tests/{task-id}.md**
+8. Log completion event to ai-state/operations.log
 
 When done, report:
 - Implementation summary
 - Quality score (8 metrics)
 - Test results (8 types)
 - Files created/modified
+- Test documentation path
 - Next recommended task (if any)
 ```
 
@@ -94,7 +96,8 @@ The orchestrator skill:
 4. Self-evaluates quality (8 metrics)
 5. Refines until >= 8.0/10
 6. Updates task status in tasks.yaml
-7. Logs event to operations.log
+7. Creates test documentation in ai-state/active/tests/
+8. Logs event to operations.log
 
 ### Step 5: Update Task Status
 
@@ -113,7 +116,77 @@ tasks:
       - "src/components/Auth/LoginButton.test.tsx"
 ```
 
-### Step 6: Log Event
+### Step 6: Create Test Documentation
+
+**MANDATORY:** Create test documentation in `ai-state/active/tests/{task-id}.md`:
+
+```markdown
+# Tests for task-001-oauth-ui
+
+**Task:** Implement OAuth2 login UI
+**Context:** frontend
+**Status:** TDD during development → Regression tests after completion
+**Created:** 2025-11-04T18:00:00Z
+
+## Test Files Created
+
+1. `src/components/Auth/LoginButton.test.tsx` (15 test cases)
+
+## Test Types Coverage (All 8 Required)
+
+- ✅ **Valid** (3 cases) - User clicks Google, redirects, logs in
+- ✅ **Error** (2 cases) - OAuth errors, network failures
+- ✅ **Invalid** (2 cases) - CSRF attacks, invalid state
+- ✅ **Edge** (2 cases) - Popup blockers, network failures
+- ✅ **Functional** (2 cases) - Token storage, refresh logic
+- ✅ **Visual** (1 case) - Button renders properly
+- ✅ **Performance** (1 case) - Redirect < 500ms
+- ✅ **Security** (2 cases) - Token exposure, secure storage
+
+**Total:** 15 test cases, 90%+ coverage
+
+## Running Tests
+
+### Run all tests for this task
+```bash
+npm test LoginButton.test.tsx
+```
+
+### Run specific test type
+```bash
+npm test LoginButton.test.tsx -t "valid"
+npm test LoginButton.test.tsx -t "security"
+```
+
+### Run with coverage
+```bash
+npm test LoginButton.test.tsx -- --coverage
+```
+
+## Test Status
+
+- **TDD Phase:** Tests written before implementation ✅
+- **Implementation:** Feature complete ✅
+- **Regression:** All tests passing ✅
+- **Coverage:** 90%+ ✅
+
+## Integration with CI/CD
+
+These tests run automatically:
+- On every commit (pre-commit hook)
+- On every PR (GitHub Actions)
+- Before deployment (staging/production)
+
+**Regression Status:** ACTIVE - Tests prevent future breakage
+```
+
+**Purpose:**
+- During development: TDD guide
+- After completion: Regression test suite
+- For new developers: Test discovery
+- For CI/CD: Automated verification
+
+### Step 7: Log Event
 
 Append to `ai-state/operations.log`:
 
@@ -125,6 +198,7 @@ Append to `ai-state/operations.log`:
   "task_id": "task-001-oauth-ui",
   "quality_score": 8.5,
   "tests_passed": 8,
+  "test_doc_created": "ai-state/active/tests/task-001-oauth-ui.md",
   "duration_minutes": 15
 }
 ```
@@ -259,6 +333,7 @@ result:
   files_created:
     - "src/components/Auth/LoginButton.tsx"
     - "src/components/Auth/LoginButton.test.tsx"
+  test_doc_created: "ai-state/active/tests/task-001-oauth-ui.md"
   next_recommended: "task-002-oauth-api"
 ```
 
@@ -447,8 +522,9 @@ The `/execute-tasks` command is the **execution engine** that:
 3. ✅ Invokes orchestrator skills with full task context
 4. ✅ Monitors execution and quality gates
 5. ✅ Updates task status upon completion
-6. ✅ Logs all events to operations.log
-7. ✅ Handles errors and dependencies
+6. ✅ **Creates test documentation in ai-state/active/tests/**
+7. ✅ Logs all events to operations.log
+8. ✅ Handles errors and dependencies
 
 **Complete Workflow:**
 ```
