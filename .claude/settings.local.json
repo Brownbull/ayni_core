@@ -21,7 +21,9 @@
       "Bash(do echo \"=== $app ===\")",
       "Bash(ls:*)",
       "Bash(for dir in apps/authentication/migrations apps/companies/migrations apps/processing/migrations apps/analytics/migrations)",
-      "Bash(do touch \"$dir/__init__.py\")"
+      "Bash(do touch \"$dir/__init__.py\")",
+      "Bash(playwright install:*)",
+      "Bash(timeout 5 bash:*)"
     ],
     "deny": [],
     "ask": []
