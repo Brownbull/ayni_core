@@ -5,7 +5,9 @@
       "Bash(\"C:\\Projects\\play\\ayni_core\\ai-state\\active\\tasks.yaml\")",
       "Bash(python:*)",
       "Bash(ai-state/operations.log)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Skill(devops-orchestrator)",
+      "Bash(\"C:/Projects/play/ayni_core/ai-state/operations.log\")"
     ],
     "deny": [],
     "ask": []
