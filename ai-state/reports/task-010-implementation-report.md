@@ -545,12 +545,49 @@ docker-compose logs celery
 
 ---
 
+## Additional Enhancement: One Upload Per Company Rule
+
+**Added during task-010 implementation:**
+
+### Business Rule
+- Each company can only have **one active upload** processing at a time
+- Active statuses: `pending`, `validating`, `processing`
+- This prevents resource exhaustion and ensures fair processing
+
+### Implementation Details
+- Added `Upload.has_active_upload(company)` class method to [models.py](apps/processing/models.py)
+- Added `Upload.get_active_upload(company)` class method
+- Upload API validates before accepting new uploads in [views.py](apps/processing/views.py)
+- Returns `409 Conflict` with active upload details if blocked
+- 10 comprehensive tests in [test_concurrent_uploads.py](apps/processing/test_concurrent_uploads.py)
+
+### Benefits
+- **Fair Resource Allocation:** No single company can monopolize resources
+- **Predictable Load:** Maximum concurrent uploads = number of registered companies
+- **Clear User Feedback:** Users see details about their active upload (ID, status, progress, filename)
+- **WebSocket Integration:** Users can monitor active upload via WebSocket in real-time
+
+### API Response Example (409 Conflict)
+```json
+{
+  "error": "Upload already in progress",
+  "detail": "This company already has an upload being processed. Please wait for it to complete before uploading another file.",
+  "active_upload_id": 123,
+  "active_upload_status": "processing",
+  "active_upload_progress": 45,
+  "active_upload_filename": "sales_data.csv"
+}
+```
+
+---
+
 ## Conclusion
 
-Task 010 successfully delivers a production-ready WebSocket progress tracking system that provides excellent real-time UX for CSV upload processing. The implementation is secure, performant, and well-tested with 29 tests covering all 8 test types.
+Task 010 successfully delivers a production-ready WebSocket progress tracking system that provides excellent real-time UX for CSV upload processing. The implementation is secure, performant, and well-tested with 29 tests covering all 8 test types. Additionally, the one-upload-per-company business rule ensures fair resource allocation and predictable server load.
 
-**Status:** ✅ COMPLETE
+**Status:** ✅ COMPLETE (+ Bonus Enhancement)
 **Quality Score:** 9.25/10
+**Tests:** 29 WebSocket tests + 10 concurrent upload tests = 39 total
 **Ready for Integration:** YES
 **Next Task:** task-011-update-tracking (data-orchestrator)
 

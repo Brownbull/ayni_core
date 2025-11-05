@@ -648,6 +648,14 @@ POST   /api/processing/mapping/                   # Save column mapping
 GET    /api/processing/mapping/{company_id}/      # Get saved mapping
 ```
 
+**🔒 Business Rule: One Upload Per Company**
+- Each company can only have **one active upload** processing at a time
+- Active statuses: `pending`, `validating`, `processing`
+- Attempting a second upload returns `409 Conflict` with details about the active upload
+- This ensures fair resource allocation across all companies
+- **Maximum concurrent uploads = number of registered companies**
+- After upload completes/fails/cancels, company can upload again
+
 ---
 
 ## 🔌 WebSocket Endpoints (✅ ACTIVE)
