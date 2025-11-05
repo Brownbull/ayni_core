@@ -417,6 +417,27 @@ jobs:
 
 ---
 
-**Last Updated**: 2024-11-04
-**Version**: 1.0
+## Task Completion Documentation Pattern
+
+**CRITICAL**: After completing ANY task, create BOTH documents:
+
+1. **Evaluation** → `ai-state/evaluations/task-XXX-evaluation.md`
+   - 8 metric scores (component architecture, state management, etc.)
+   - Test results (8 test types)
+   - Quality checklist
+
+2. **Implementation Report** → `ai-state/reports/task-XXX-implementation-report.md`
+   - Executive summary
+   - Technical implementation details
+   - Usage examples
+   - Lessons learned
+   - Integration points
+   - See task-005 or task-006 reports as templates
+
+**Both files are mandatory. Missing either = incomplete task.**
+
+---
+
+**Last Updated**: 2025-11-05
+**Version**: 1.1
 **Purpose**: Standard patterns for consistent implementation across AYNI platform

@@ -25,7 +25,14 @@
       "Bash(playwright install:*)",
       "Bash(timeout 5 bash:*)",
       "Bash(NUL)",
-      "Bash(C:/Projects/play/ayni_core/ai-state/operations.log)"
+      "Bash(C:/Projects/play/ayni_core/ai-state/operations.log)",
+      "Skill(frontend-orchestrator)",
+      "Bash(dir:*)",
+      "Bash(if not exist srccomponents mkdir srccomponents)",
+      "Bash(if not exist srccomponentsUpload mkdir srccomponentsUpload)",
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []
