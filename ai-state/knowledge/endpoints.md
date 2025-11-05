@@ -25,6 +25,24 @@ Only add endpoints after they have been implemented and verified.
 - **URL**: postgresql://localhost:5432/ayni_dev
 - **Status**: ✅ ACTIVE
 
+### Redis (Cache & Message Broker)
+- **Port**: 6379
+- **URL**: redis://localhost:6379/0
+- **Status**: ✅ ACTIVE
+- **Usage**: Celery broker, Channels, caching
+
+### Celery Worker (Async Processing)
+- **Port**: N/A (worker process)
+- **Status**: ✅ ACTIVE
+- **Command**: `celery -A config worker -l info`
+- **Queue**: processing
+
+### Flower (Celery Monitoring)
+- **Port**: 5555
+- **URL**: http://localhost:5555
+- **Status**: ✅ ACTIVE
+- **Command**: `celery -A config flower --port=5555`
+
 ---
 
 ## Live API Endpoints
@@ -351,8 +369,10 @@ VITE_WS_URL=ws://localhost:8000/ws
 
 ---
 
-**Last Updated**: 2025-11-05T06:45:00Z
+**Last Updated**: 2025-11-05T08:15:00Z
+**Active Services**: 9 (Backend, DB, Redis, Celery, Flower, + 4 pending)
 **Active Endpoints**: 17 (Admin: 6, Auth: 7, Companies: 10)
+**Monitoring**: Flower dashboard @ port 5555
 **Pending Implementation**: Uploads, Processing, Analytics, AI/ML
 **Update Rule**: Only add endpoints after implementation + verification
 
