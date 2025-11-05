@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\"C:\\Projects\\play\\ayni_core\\ai-state\\knowledge\\endpoints.txt\")"
+      "Bash(\"C:\\Projects\\play\\ayni_core\\ai-state\\knowledge\\endpoints.txt\")",
+      "Bash(\"C:\\Projects\\play\\ayni_core\\ai-state\\active\\tasks.yaml\")",
+      "Bash(python:*)",
+      "Bash(ai-state/operations.log)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

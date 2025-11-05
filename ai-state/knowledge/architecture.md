@@ -72,36 +72,66 @@ Multi-tier architecture for PYMEs analytics platform with separated frontend, ba
 
 ## Directory Structure
 
+### Multi-Repository Architecture
+The AYNI platform uses a **three-repository** structure for clear separation of concerns:
+
 ```
-ayni_core/
-├── backend/                 # Django project
-│   ├── api/                # REST endpoints
-│   ├── auth/              # Authentication
-│   ├── companies/         # Company management
-│   ├── analytics/         # Analytics logic
-│   ├── processing/        # Data processing tasks
-│   └── config/           # Django settings
-├── frontend/               # React application
-│   ├── src/
-│   │   ├── components/   # UI components
-│   │   ├── pages/       # Route pages
-│   │   ├── services/    # API calls
-│   │   ├── store/       # State management
-│   │   └── utils/       # Helpers
-│   └── public/
-├── src/                    # Existing GabeDA engine
-│   ├── core/              # Core functionality
-│   ├── execution/         # Execution logic
-│   ├── features/          # Feature engineering
-│   └── export/           # Export utilities
-├── database/              # Database scripts
-│   ├── migrations/
-│   └── seeds/
-└── infrastructure/        # Deployment configs
-    ├── docker/
-    ├── kubernetes/
-    └── terraform/
+C:\Projects\play\
+├── ayni_core/              # Orchestration & shared resources
+│   ├── .claude/           # AI orchestration framework
+│   ├── ai-state/          # Task management, knowledge base
+│   ├── src/               # Existing GabeDA engine
+│   │   ├── core/         # Core functionality
+│   │   ├── execution/    # Execution logic
+│   │   ├── features/     # Feature engineering
+│   │   └── export/       # Export utilities
+│   └── orchestration.config.json
+│
+├── ayni_be/               # Backend repository (Django)
+│   ├── apps/
+│   │   ├── authentication/  # JWT auth
+│   │   ├── companies/       # Company management
+│   │   ├── analytics/       # Analytics API
+│   │   ├── processing/      # CSV processing, Celery tasks
+│   │   └── api/            # DRF endpoints
+│   ├── config/             # Django settings
+│   ├── requirements.txt
+│   └── manage.py
+│
+└── ayni_fe/               # Frontend repository (React)
+    ├── src/
+    │   ├── components/    # Reusable UI components
+    │   ├── pages/        # Route pages
+    │   ├── services/     # API client
+    │   ├── store/        # State management (Zustand/Redux)
+    │   ├── hooks/        # Custom React hooks
+    │   └── utils/        # Helpers
+    ├── public/
+    ├── package.json
+    └── vite.config.ts
 ```
+
+### Repository Responsibilities
+
+**ayni_core**:
+- Orchestration framework and AI task management
+- GabeDA feature engine (shared by backend)
+- Knowledge base and standards
+- Cross-repo coordination
+
+**ayni_be**:
+- Django REST API
+- Database models and migrations
+- Celery task processing
+- WebSocket server
+- Imports GabeDA from ayni_core
+
+**ayni_fe**:
+- React UI components
+- Client-side routing
+- State management
+- API integration
+- Tailwind CSS styling
 
 ## Technology Decisions
 
@@ -291,8 +321,41 @@ analytics.updated
 - Webhook notifications
 - Report generation
 
+## Development Coordination Strategy
+
+### Multi-Repo Workflow
+Since the platform spans three repositories, development follows this pattern:
+
+1. **Planning & Orchestration** (ayni_core):
+   - All task planning happens here via `/brainstorm` and `/write-plan`
+   - Tasks are assigned to specific repositories
+   - Track progress across all repos in `ai-state/active/tasks.yaml`
+
+2. **Backend Development** (ayni_be):
+   - Tasks tagged with `context: backend`
+   - Work directory: `C:\Projects\play\ayni_be`
+   - Imports GabeDA from `../ayni_core/src`
+   - Tests run independently
+
+3. **Frontend Development** (ayni_fe):
+   - Tasks tagged with `context: frontend`
+   - Work directory: `C:\Projects\play\ayni_fe`
+   - Connects to backend via API
+   - Tests run independently
+
+### Cross-Repository Dependencies
+- Backend imports GabeDA: `sys.path.append('../ayni_core')`
+- Frontend API endpoint registry synced from backend
+- Shared TypeScript types generated from Django models
+- Docker Compose orchestrates all services locally
+
+### Deployment Architecture
+- **ayni_core**: Not deployed (development orchestration only)
+- **ayni_be**: Railway (backend + workers + database)
+- **ayni_fe**: Render.com (static site or SSR)
+
 ---
 
-**Last Updated**: 2024-11-04
-**Version**: 1.0
-**Status**: Design Phase
+**Last Updated**: 2025-11-04
+**Version**: 1.1
+**Status**: Multi-repo architecture documented

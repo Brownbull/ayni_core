@@ -1,5 +1,847 @@
-epics: {}
-metadata:
-  last_updated: '2025-11-04T20:45:15.492026Z'
-  version: 2.0.1
-tasks: {}
+# AYNI Core - Implementation Plan
+# Generated: 2024-11-04
+# Updated: 2025-11-04
+# Epic: MVP Phase - Foundation for Chilean PYMEs Analytics Platform
+
+epic:
+  id: epic-ayni-mvp-foundation
+  name: "AYNI Core MVP - PYMEs Analytics Platform Foundation"
+  description: "Build foundational platform for Chilean PYMEs to track business metrics, upload data, and view basic analytics"
+  phase: "MVP (Phase 1)"
+  contexts: ["frontend", "backend", "data", "devops"]
+  quality_threshold: 8.0
+  test_coverage_minimum: 80
+  created: "2024-11-04"
+
+  vision: |
+    Democratize enterprise-level analytics for Chilean PYMEs. Make data insights feel like
+    a superpower - compact, visual, obvious information that respects Chilean market's
+    time sensitivity and risk aversion. No financial advice, just data-backed insights.
+
+# ============================================================================
+# SUMMARY & QUICK REFERENCE
+# ============================================================================
+
+summary:
+  total_tasks: 28
+  by_priority:
+    critical: 11
+    high: 7
+    medium: 7
+    low: 3
+
+  by_context:
+    frontend: 8
+    backend: 12
+    data: 4
+    devops: 4
+
+  estimated_duration: "6-8 weeks for MVP"
+
+  milestones:
+    week_1_2: "Project setup, database, authentication (tasks 001-005)"
+    week_3_4: "Data upload, processing, GabeDA integration (tasks 006-012)"
+    week_5_6: "Frontend core, analytics views (tasks 013-018)"
+    week_7: "Analytics API, features (tasks 019-022)"
+    week_8: "Testing, deployment (tasks 023-028)"
+
+  success_criteria:
+    - "Chilean PYME can register, upload CSV, see monthly analytics"
+    - "Data processed through GabeDA successfully"
+    - "Multi-level aggregations stored and queryable"
+    - "Beautiful, responsive UI matching UX vision"
+    - "Column mapping interface working"
+    - "Real-time upload progress via WebSocket"
+    - "Role-based analytics views functional"
+    - "Production deployed and accessible"
+    - "80%+ test coverage"
+    - "< 2s page load times"
+
+# ============================================================================
+# TASK REGISTRY
+# (All tasks follow 8 test types: valid, error, invalid, edge,
+#  functional, visual, performance, security)
+# ============================================================================
+
+tasks:
+  # PHASE 1: PROJECT SETUP & INFRASTRUCTURE
+  - id: task-001-project-structure
+    epic: epic-ayni-mvp-foundation
+    context: devops
+    priority: critical
+    status: pending
+    dependencies: []
+
+    when: "Project initialized, brainstorming complete"
+    who: "devops-orchestrator"
+    where: "C:/Projects/play/ayni_be/, C:/Projects/play/ayni_fe/"
+    what: "Create Django backend and React frontend project structure"
+    how: "ai-state/standards/devops-standard.md"
+    goal: "Complete project scaffolding with all configurations"
+
+    check:
+      valid: "Django server starts on port 8000, React on 3000"
+      error: "Handle missing dependencies with clear error messages"
+      invalid: "Reject invalid environment variable configurations"
+      edge: "Work on Windows, macOS, Linux"
+      functional: "All apps registered and importable"
+      visual: "React renders welcome page with Tailwind"
+      performance: "Initial load < 3 seconds"
+      security: "Secret keys in .env, not committed"
+
+    close: "Both backend and frontend run in Docker Compose"
+
+  - id: task-002-database-schema
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: critical
+    status: pending
+    dependencies: [task-001-project-structure]
+
+    when: "Project structure created"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/*/models.py"
+    what: "Create Django models for multi-level aggregation architecture"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Complete database schema with all aggregation levels"
+
+    check:
+      valid: "All models create tables, migrations run"
+      error: "Handle migration conflicts, provide rollback"
+      invalid: "Reject invalid RUT formats, negative values"
+      edge: "Companies with no data, empty uploads"
+      functional: "Foreign key relationships work"
+      visual: "Django admin shows all models"
+      performance: "Migrations complete < 10 seconds"
+      security: "Passwords hashed, no PII in logs"
+
+    close: "Database schema matches architecture.md, migrations applied"
+
+  - id: task-003-authentication-system
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: critical
+    status: pending
+    dependencies: [task-002-database-schema]
+
+    when: "Database schema created"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/authentication/"
+    what: "Implement JWT authentication with DRF"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Secure auth system with register, login, logout"
+
+    check:
+      valid: "User can register, login, access protected endpoints"
+      error: "Handle duplicate emails, wrong passwords gracefully"
+      invalid: "Reject weak passwords, invalid emails"
+      edge: "Concurrent login attempts, expired tokens"
+      functional: "JWT refresh works, logout invalidates tokens"
+      visual: "N/A (backend)"
+      performance: "Login response < 200ms"
+      security: "Passwords hashed with Argon2, tokens expire"
+
+    close: "Authentication works end-to-end, admin user (admin@ayni.cl) created"
+
+  - id: task-004-company-management
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: high
+    status: pending
+    dependencies: [task-003-authentication-system]
+
+    when: "Authentication complete"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/companies/"
+    what: "Implement company management API endpoints"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Users can create, view, update companies with isolation"
+
+    check:
+      valid: "User creates company, sees it in list"
+      error: "Handle duplicate RUT, invalid industry codes"
+      invalid: "Reject malformed RUT, unauthorized access"
+      edge: "User with no companies, 50+ companies"
+      functional: "Soft delete preserves data, permissions work"
+      visual: "N/A (backend)"
+      performance: "Company list query < 100ms"
+      security: "Users cannot access other users' companies"
+
+    close: "Company CRUD works, data isolation verified"
+
+  - id: task-005-endpoints-registry
+    epic: epic-ayni-mvp-foundation
+    context: devops
+    priority: medium
+    status: pending
+    dependencies: [task-003-authentication-system, task-004-company-management]
+
+    when: "Initial endpoints created"
+    who: "devops-orchestrator"
+    where: "ai-state/knowledge/endpoints.txt"
+    what: "Initialize and document all API endpoints"
+    how: "ai-state/standards/devops-standard.md"
+    goal: "Complete endpoint registry with all URLs, ports"
+
+    check:
+      valid: "All endpoints documented correctly"
+      error: "Script warns if endpoints.txt outdated"
+      invalid: "Reject missing port/URL information"
+      edge: "New services added, services removed"
+      functional: "Team can find any endpoint quickly"
+      visual: "Well-formatted, easy to scan"
+      performance: "N/A (documentation)"
+      security: "No sensitive tokens in endpoints.txt"
+
+    close: "endpoints.txt complete, integrated into workflow"
+
+  # PHASE 2: DATA UPLOAD & PROCESSING
+  - id: task-006-column-mapping-ui
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: high
+    status: pending
+    dependencies: [task-001-project-structure]
+
+    when: "Authentication UI complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/components/Upload/"
+    what: "Build visual column mapping interface for CSV uploads"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "User-friendly drag-drop mapping based on COLUMN_SCHEMA"
+
+    check:
+      valid: "User maps CSV columns to system schema"
+      error: "Handle unmatched required columns with clear messages"
+      invalid: "Prevent submission with missing required mappings"
+      edge: "CSV with 50+ columns, special characters"
+      functional: "Saved mappings load on next upload"
+      visual: "Drag-drop smooth, visual feedback clear"
+      performance: "Render 100+ column pairs < 500ms"
+      security: "Client validation only, server validates"
+
+    close: "Column mapping UI complete, tested with real CSVs"
+
+  - id: task-007-file-upload-api
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: critical
+    status: pending
+    dependencies: [task-004-company-management]
+
+    when: "Company management complete"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/processing/views.py"
+    what: "Create CSV upload endpoint with column mapping support"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Accept CSVs, validate mappings, trigger async processing"
+
+    check:
+      valid: "User uploads CSV, receives upload ID"
+      error: "Handle file too large, invalid CSV format"
+      invalid: "Reject non-CSV files, corrupted files"
+      edge: "CSV with 100k+ rows, empty CSV"
+      functional: "Upload record created, file saved"
+      visual: "N/A (backend)"
+      performance: "Upload initiation < 500ms"
+      security: "Scan uploaded files, limit upload rate"
+
+    close: "CSV upload endpoint works, files stored securely"
+
+  - id: task-008-celery-setup
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: critical
+    status: pending
+    dependencies: [task-007-file-upload-api]
+
+    when: "File upload API created"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/config/celery.py, backend/apps/processing/tasks.py"
+    what: "Setup Celery with Redis broker for async processing"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Celery processes CSV files asynchronously with retry"
+
+    check:
+      valid: "Celery worker processes tasks successfully"
+      error: "Tasks retry on failure, errors logged"
+      invalid: "Reject invalid task parameters"
+      edge: "Worker crashes, queue overload"
+      functional: "Task results retrievable, progress updates work"
+      visual: "Flower dashboard shows task status"
+      performance: "Task dispatch < 100ms"
+      security: "Task parameters sanitized, no code injection"
+
+    close: "Celery configured, workers processing reliably"
+
+  - id: task-009-gabeda-integration
+    epic: epic-ayni-mvp-foundation
+    context: data
+    priority: critical
+    status: pending
+    dependencies: [task-008-celery-setup]
+
+    when: "Celery setup complete"
+    who: "data-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/processing/gabeda_wrapper.py"
+    what: "Create Django wrapper for existing GabeDA feature engine"
+    how: "ai-state/standards/data-quality-standard.md"
+    goal: "Seamless integration of GabeDA with Django models"
+
+    check:
+      valid: "Uploaded CSV processed through GabeDA successfully"
+      error: "Handle GabeDA errors, data quality issues"
+      invalid: "Reject data violating COLUMN_SCHEMA constraints"
+      edge: "Missing columns, null values"
+      functional: "All aggregation levels generated correctly"
+      visual: "N/A (backend)"
+      performance: "Process 10k rows < 60 seconds"
+      security: "Validate data before processing, prevent SQL injection"
+
+    close: "GabeDA integrated, processing real data successfully"
+
+  - id: task-010-websocket-progress
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: medium
+    status: pending
+    dependencies: [task-008-celery-setup]
+
+    when: "Celery tasks implemented"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/processing/consumers.py"
+    what: "Implement WebSocket for real-time upload progress"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Frontend receives live progress updates during processing"
+
+    check:
+      valid: "Frontend receives progress updates in real-time"
+      error: "Handle WebSocket disconnections gracefully"
+      invalid: "Reject unauthorized WebSocket connections"
+      edge: "Multiple clients watching same upload"
+      functional: "Progress percentages accurate, events ordered"
+      visual: "N/A (backend)"
+      performance: "Event emission < 50ms"
+      security: "Authenticate WebSocket connections with JWT"
+
+    close: "WebSocket delivers real-time progress reliably"
+
+  - id: task-011-update-tracking
+    epic: epic-ayni-mvp-foundation
+    context: data
+    priority: medium
+    status: pending
+    dependencies: [task-009-gabeda-integration]
+
+    when: "GabeDA integration complete"
+    who: "data-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/processing/update_tracker.py"
+    what: "Implement data update tracking system"
+    how: "ai-state/standards/data-quality-standard.md"
+    goal: "Track rows_before, rows_after, rows_updated for transparency"
+
+    check:
+      valid: "Update tracking shows correct row counts"
+      error: "Handle updates that fail midway, rollback correctly"
+      invalid: "Reject updates violating data constraints"
+      edge: "Update overwrites all existing data"
+      functional: "Audit trail complete, data lineage clear"
+      visual: "N/A (backend)"
+      performance: "Tracking adds < 10% to processing time"
+      security: "Audit logs immutable, timestamped"
+
+    close: "Update tracking working, users see impact of uploads"
+
+  - id: task-012-intermediate-csv-download
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: low
+    status: pending
+    dependencies: [task-009-gabeda-integration]
+
+    when: "GabeDA integration complete"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/processing/export.py"
+    what: "Generate downloadable intermediate CSV files during processing"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Users can download processed CSVs for verification"
+
+    check:
+      valid: "User downloads intermediate CSV successfully"
+      error: "Handle missing files, expired files gracefully"
+      invalid: "Reject unauthorized download attempts"
+      edge: "Very large CSVs (>100MB), empty aggregations"
+      functional: "Downloaded CSV matches database data"
+      visual: "N/A (backend)"
+      performance: "Generate CSV for 10k rows < 5 seconds"
+      security: "Authenticated downloads only, signed URLs"
+
+    close: "Users can download all intermediate CSV files"
+
+  # PHASE 3: FRONTEND CORE
+  - id: task-013-authentication-ui
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: critical
+    status: pending
+    dependencies: [task-003-authentication-system]
+
+    when: "Authentication API complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/pages/Auth/"
+    what: "Build login, register, and password management UI"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "Beautiful, functional authentication flows with Tailwind"
+
+    check:
+      valid: "User can register, login, logout successfully"
+      error: "Display API errors clearly (duplicate email, wrong password)"
+      invalid: "Client-side validation prevents bad submissions"
+      edge: "Slow network, offline mode"
+      functional: "JWT refresh works, session persists across page reloads"
+      visual: "Beautiful UI matching UX vision, loading states smooth"
+      performance: "Login flow < 2 seconds"
+      security: "No XSS vulnerabilities, tokens stored securely"
+
+    close: "Authentication UI complete, fully functional"
+
+  - id: task-014-dashboard-layout
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: critical
+    status: pending
+    dependencies: [task-013-authentication-ui]
+
+    when: "Authentication UI complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/components/Layout/"
+    what: "Build main dashboard layout with navigation and company selector"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "Responsive dashboard layout matching UX vision"
+
+    check:
+      valid: "Dashboard loads, navigation works"
+      error: "Handle API errors gracefully, fallback UI"
+      invalid: "Prevent navigation to unauthorized routes"
+      edge: "User with no companies, 20+ companies"
+      functional: "Company switching refreshes all data"
+      visual: "Layout matches UX vision mockups, responsive"
+      performance: "Layout render < 100ms"
+      security: "Protected routes require authentication"
+
+    close: "Dashboard layout complete, ready for content"
+
+  - id: task-015-upload-interface
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: high
+    status: pending
+    dependencies: [task-006-column-mapping-ui, task-007-file-upload-api]
+
+    when: "Column mapping UI and upload API complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/pages/Upload/"
+    what: "Build complete CSV upload interface with drag-drop and progress"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "Intuitive upload experience matching Chilean user expectations"
+
+    check:
+      valid: "User uploads CSV, sees progress, gets results"
+      error: "Handle upload failures, network errors gracefully"
+      invalid: "Prevent uploading invalid files, show clear errors"
+      edge: "Very large files, very slow network"
+      functional: "WebSocket reconnects if disconnected"
+      visual: "Beautiful UI, progress bar smooth, feels fast"
+      performance: "UI responsive during upload"
+      security: "Client validates file type, server validates content"
+
+    close: "Upload interface complete, tested end-to-end"
+
+  - id: task-016-monthly-analytics-view
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: high
+    status: pending
+    dependencies: [task-014-dashboard-layout]
+
+    when: "Dashboard layout complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/pages/Analytics/"
+    what: "Build monthly analytics view with KPIs and charts"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "Compact, visual, high-value monthly insights"
+
+    check:
+      valid: "User sees monthly KPIs and charts"
+      error: "Handle no data gracefully with empty state"
+      invalid: "Validate date selections"
+      edge: "Month with no transactions, partial month data"
+      functional: "Charts update when month changes"
+      visual: "Charts beautiful, KPIs prominent, layout clean"
+      performance: "Render full view < 500ms"
+      security: "Only show user's company data"
+
+    close: "Monthly analytics view complete, visually impressive"
+
+  - id: task-017-historical-data-panel
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: medium
+    status: pending
+    dependencies: [task-016-monthly-analytics-view]
+
+    when: "Monthly analytics view complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/pages/Historical/"
+    what: "Build historical data navigation panel with year/quarter/month grid"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "Quick temporal navigation matching UX vision"
+
+    check:
+      valid: "User navigates to any historical month"
+      error: "Handle missing data gracefully"
+      invalid: "Prevent selecting future months"
+      edge: "First month after signup, 5+ years of data"
+      functional: "Navigation updates analytics view"
+      visual: "Grid layout clear, interactive, responsive"
+      performance: "Grid renders < 200ms"
+      security: "Only show available data for company"
+
+    close: "Historical panel complete, navigation intuitive"
+
+  - id: task-018-landing-page
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: low
+    status: pending
+    dependencies: [task-013-authentication-ui]
+
+    when: "Authentication UI complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/pages/Landing/"
+    what: "Create compelling landing page communicating vision"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "Landing page that resonates with Chilean PYMEs"
+
+    check:
+      valid: "Landing page loads, CTA works"
+      error: "Handle API down gracefully"
+      invalid: "N/A"
+      edge: "Slow connection, mobile 3G"
+      functional: "All links work, CTA redirects to register"
+      visual: "Beautiful, professional, inspiring"
+      performance: "Initial load < 2 seconds"
+      security: "No vulnerabilities in forms"
+
+    close: "Landing page complete, ready to attract users"
+
+  # PHASE 4: ANALYTICS & FEATURES
+  - id: task-019-analytics-api
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: high
+    status: pending
+    dependencies: [task-009-gabeda-integration]
+
+    when: "Aggregations stored in database"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/analytics/views.py"
+    what: "Create analytics API endpoints for dashboard consumption"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Fast, cached analytics endpoints for all temporal views"
+
+    check:
+      valid: "API returns correct analytics for all periods"
+      error: "Handle missing data with sensible defaults"
+      invalid: "Reject invalid date ranges, unauthorized access"
+      edge: "Company with no data, first month of data"
+      functional: "Cache invalidates on new upload"
+      visual: "N/A (backend)"
+      performance: "Response < 200ms (cached), < 1s (uncached)"
+      security: "Data isolation enforced, no leakage"
+
+    close: "Analytics API complete, fast, reliable"
+
+  - id: task-020-buff-debuff-system
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: medium
+    status: pending
+    dependencies: [task-019-analytics-api]
+
+    when: "Analytics API created"
+    who: "backend-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/analytics/macro_indicators.py"
+    what: "Implement macroeconomic indicators as buffs/debuffs"
+    how: "ai-state/standards/backend-standard.md"
+    goal: "Show economic context as gaming-style modifiers"
+
+    check:
+      valid: "API returns buffs/debuffs with explanations"
+      error: "Handle external API failures with cached data"
+      invalid: "Validate period format"
+      edge: "Extreme economic conditions, missing data"
+      functional: "Scores calculated correctly"
+      visual: "N/A (backend)"
+      performance: "Response < 500ms"
+      security: "No sensitive economic data exposed"
+
+    close: "Buff/debuff system working, engaging for users"
+
+  - id: task-021-benchmarking-aggregation
+    epic: epic-ayni-mvp-foundation
+    context: data
+    priority: low
+    status: pending
+    dependencies: [task-019-analytics-api]
+
+    when: "Multiple companies have data"
+    who: "data-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/analytics/benchmarks.py"
+    what: "Calculate industry benchmarks with 10+ PYME minimum"
+    how: "ai-state/standards/data-quality-standard.md"
+    goal: "Anonymous industry averages for comparison"
+
+    check:
+      valid: "Benchmarks calculated for industries with 10+ PYMEs"
+      error: "Handle insufficient data gracefully"
+      invalid: "Never expose individual company data"
+      edge: "Industry with exactly 10 companies"
+      functional: "Benchmarks update daily"
+      visual: "N/A (backend)"
+      performance: "Calculation for all industries < 5 minutes"
+      security: "Absolute anonymity, audit for leaks"
+
+    close: "Benchmarking system working, privacy guaranteed"
+
+  - id: task-022-role-based-views
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: medium
+    status: pending
+    dependencies: [task-016-monthly-analytics-view]
+
+    when: "Monthly analytics view complete"
+    who: "frontend-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/components/Analytics/RoleViews/"
+    what: "Implement role-specific dashboard views (owner, operations, marketing)"
+    how: "ai-state/standards/frontend-standard.md"
+    goal: "Tailored KPIs and charts for each business role"
+
+    check:
+      valid: "Each role sees relevant KPIs"
+      error: "Handle missing metrics gracefully"
+      invalid: "Validate role selection"
+      edge: "User switches roles rapidly"
+      functional: "View preference persists across sessions"
+      visual: "Each view has distinct, appropriate design"
+      performance: "View switch < 300ms"
+      security: "Role permissions enforced"
+
+    close: "Role-based views complete, users love them"
+
+  # PHASE 5: TESTING & DEPLOYMENT
+  - id: task-023-backend-tests
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: high
+    status: pending
+    dependencies: [task-001-project-structure]
+
+    when: "All backend features implemented"
+    who: "test-orchestrator"
+    where: "C:/Projects/play/ayni_be/apps/*/tests/"
+    what: "Write comprehensive backend test suite"
+    how: "ai-state/standards/testing-requirements.md"
+    goal: "80%+ test coverage for all backend code"
+
+    check:
+      valid: "All tests pass on clean database"
+      error: "Tests catch actual bugs"
+      invalid: "Tests validate edge cases"
+      edge: "Tests cover boundary conditions"
+      functional: "Integration tests cover user flows"
+      visual: "N/A"
+      performance: "Test suite runs < 2 minutes"
+      security: "Security tests for auth, permissions"
+
+    close: "Backend test suite complete, 80%+ coverage"
+
+  - id: task-024-frontend-tests
+    epic: epic-ayni-mvp-foundation
+    context: frontend
+    priority: high
+    status: pending
+    dependencies: [task-001-project-structure]
+
+    when: "All frontend features implemented"
+    who: "test-orchestrator"
+    where: "C:/Projects/play/ayni_fe/src/**/*.test.tsx"
+    what: "Write comprehensive frontend test suite"
+    how: "ai-state/standards/testing-requirements.md"
+    goal: "80%+ test coverage for all frontend code"
+
+    check:
+      valid: "All tests pass consistently"
+      error: "Tests catch UI bugs"
+      invalid: "Tests validate form validation"
+      edge: "Tests cover edge cases (empty states, etc)"
+      functional: "E2E tests cover critical user journeys"
+      visual: "Visual regression tests with Percy (future)"
+      performance: "Test suite runs < 3 minutes"
+      security: "XSS vulnerability tests"
+
+    close: "Frontend test suite complete, 80%+ coverage"
+
+  - id: task-025-ci-cd-pipeline
+    epic: epic-ayni-mvp-foundation
+    context: devops
+    priority: high
+    status: pending
+    dependencies: [task-023-backend-tests, task-024-frontend-tests]
+
+    when: "Tests written"
+    who: "devops-orchestrator"
+    where: ".github/workflows/"
+    what: "Setup CI/CD pipeline with GitHub Actions"
+    how: "ai-state/standards/devops-standard.md"
+    goal: "Automated testing and deployment on every push"
+
+    check:
+      valid: "Pipeline runs successfully on push"
+      error: "Pipeline catches failing tests"
+      invalid: "Pipeline rejects bad code (linting)"
+      edge: "Handle deployment timeouts"
+      functional: "Deployments work to all environments"
+      visual: "N/A"
+      performance: "Pipeline completes < 10 minutes"
+      security: "Secrets managed securely"
+
+    close: "CI/CD pipeline working, deployments automated"
+
+  - id: task-026-staging-deployment
+    epic: epic-ayni-mvp-foundation
+    context: devops
+    priority: high
+    status: pending
+    dependencies: [task-025-ci-cd-pipeline]
+
+    when: "CI/CD pipeline ready"
+    who: "devops-orchestrator"
+    where: "Railway, Render configurations"
+    what: "Deploy to staging environments"
+    how: "ai-state/standards/devops-standard.md"
+    goal: "Staging environment matches production, available for testing"
+
+    check:
+      valid: "Staging environment accessible and functional"
+      error: "Errors logged to Sentry"
+      invalid: "Invalid configs rejected"
+      edge: "Handle cold starts, scaling"
+      functional: "All features work in staging"
+      visual: "UI renders correctly"
+      performance: "Response times acceptable"
+      security: "HTTPS enforced, secrets secure"
+
+    close: "Staging environment live, ready for QA"
+
+  - id: task-027-production-deployment
+    epic: epic-ayni-mvp-foundation
+    context: devops
+    priority: critical
+    status: pending
+    dependencies: [task-026-staging-deployment]
+
+    when: "Staging tested, approved"
+    who: "devops-orchestrator"
+    where: "Railway, Render configurations"
+    what: "Deploy to production environments"
+    how: "ai-state/standards/devops-standard.md"
+    goal: "Production environment live, available to users"
+
+    check:
+      valid: "Production accessible, all features work"
+      error: "Error monitoring active"
+      invalid: "Production rejects invalid requests"
+      edge: "Handle high traffic, DDoS protection"
+      functional: "End-to-end user flows work"
+      visual: "UI perfect on all devices"
+      performance: "Load times meet targets (<2s)"
+      security: "Security headers, rate limiting active"
+
+    close: "Production live, AYNI platform available to Chilean PYMEs!"
+
+  - id: task-028-documentation-generation
+    epic: epic-ayni-mvp-foundation
+    context: backend
+    priority: low
+    status: pending
+    dependencies: [task-027-production-deployment]
+
+    when: "All features complete"
+    who: "backend-orchestrator"
+    where: "ai-state/human-docs/"
+    what: "Generate human-readable documentation for all roles"
+    how: "ai-state/standards/architect-standard.md"
+    goal: "Complete, accessible documentation for all stakeholders"
+
+    check:
+      valid: "All documentation generated successfully"
+      error: "Handle missing docstrings gracefully"
+      invalid: "N/A"
+      edge: "Very large codebases"
+      functional: "Documentation accurate and helpful"
+      visual: "Well-formatted, easy to read"
+      performance: "Generation < 1 minute"
+      security: "No sensitive data in docs"
+
+    close: "Complete documentation available for all roles"
+
+# ============================================================================
+# IMPLEMENTATION NOTES
+# ============================================================================
+
+notes: |
+  - This plan focuses on MVP (Phase 1) to get core platform working
+  - Each task follows the 8 test types requirement
+  - Quality threshold: 8.0/10 minimum
+  - Test coverage: 80% minimum
+  - All tasks reference appropriate standards
+  - Dependencies clearly defined
+  - Reflects Chilean market cultural considerations
+  - Integrates existing GabeDA engine
+  - Preserves all user concerns from concerns.md
+  - Aligns with vision from vision.md
+  - Uses premium Tailwind templates
+  - Mandatory endpoint tracking enforced
+  - Admin user pre-configured for testing
+
+  CRITICAL REQUIREMENTS:
+  - Update endpoints.txt with EVERY new endpoint/port
+  - Follow COLUMN_SCHEMA from src/core/constants.py
+  - NO financial advice in ANY user-facing text
+  - Test with real Chilean PYME data scenarios
+  - Ensure Spanish language support throughout
+  - Legal disclaimer on every analytics page
+
+  This plan is executable with the orchestration framework's
+  frontend, backend, data, and devops orchestrators.
+
+# ============================================================================
+# NEXT PHASES (Post-MVP)
+# ============================================================================
+
+next_phases:
+  phase_2_growth:
+    - "Benchmarking at scale (requires 10+ PYMEs)"
+    - "Advanced role views"
+    - "Buff/debuff detailed analysis"
+    - "Weekly and hourly analytics views"
+    - "Export functionality (PDF, Excel reports)"
+
+  phase_3_advanced:
+    - "AI/ML features (RAG, LLM queries)"
+    - "Predictive analytics"
+    - "Public API for integrations"
+    - "Mobile app (React Native)"
+    - "WhatsApp integration for alerts"
