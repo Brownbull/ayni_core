@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:\\Projects\\play\\ayni_core\\ai-state\\knowledge\\endpoints.txt\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

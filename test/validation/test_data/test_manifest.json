@@ -1,0 +1,593 @@
+{
+  "generated_at": "2025-10-15T11:50:24.990252",
+  "total_cases": 69,
+  "coverage_summary": {
+    "total_cases": 69,
+    "by_category": {
+      "Valid Baseline": 7,
+      "transaction_id": 4,
+      "transaction_date": 5,
+      "customer_id": 4,
+      "product_sku": 3,
+      "quantity": 5,
+      "unit_price": 4,
+      "gross_amount": 2,
+      "discount_amount": 5,
+      "net_amount": 2,
+      "tax_amount": 4,
+      "total_amount": 3,
+      "payment_status": 7,
+      "payment_date": 3,
+      "due_date": 3,
+      "Formula Validation": 4,
+      "Edge Cases": 4
+    },
+    "by_expected_result": {
+      "PASS": 43,
+      "REJECT": 24,
+      "WARNING": 2
+    },
+    "by_column_tested": {
+      "transaction_id": 4,
+      "transaction_date": 5,
+      "customer_id": 4,
+      "product_sku": 3,
+      "quantity": 5,
+      "unit_price": 4,
+      "gross_amount": 2,
+      "discount_amount": 5,
+      "net_amount": 2,
+      "tax_amount": 4,
+      "total_amount": 3,
+      "payment_status": 7,
+      "payment_date": 3,
+      "due_date": 3
+    }
+  },
+  "test_cases": [
+    {
+      "case_id": "VALID-001",
+      "category": "Valid Baseline",
+      "description": "Perfect valid transaction with all fields",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "VALID-002",
+      "category": "Valid Baseline",
+      "description": "Valid transaction without discount",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "VALID-003",
+      "category": "Valid Baseline",
+      "description": "Valid transaction without tax",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "VALID-004",
+      "category": "Valid Baseline",
+      "description": "Valid transaction with no customer_id",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "VALID-005",
+      "category": "Valid Baseline",
+      "description": "Valid transaction with no product_sku",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "VALID-006",
+      "category": "Valid Baseline",
+      "description": "Valid transaction with decimal quantity",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "VALID-007",
+      "category": "Valid Baseline",
+      "description": "Valid free item with zero price",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "TXN_ID-001",
+      "category": "transaction_id",
+      "description": "Null transaction_id",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "TXN_ID-002",
+      "category": "transaction_id",
+      "description": "Empty string transaction_id",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "TXN_ID-003",
+      "category": "transaction_id",
+      "description": "Valid alphanumeric transaction_id",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "TXN_ID-004",
+      "category": "transaction_id",
+      "description": "Valid numeric transaction_id",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "TXN_DATE-001",
+      "category": "transaction_date",
+      "description": "Null transaction_date",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "TXN_DATE-002",
+      "category": "transaction_date",
+      "description": "Future transaction_date",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "FUTURE_DATE"
+      ]
+    },
+    {
+      "case_id": "TXN_DATE-003",
+      "category": "transaction_date",
+      "description": "Date before business founding",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "DATE_BEFORE_FOUNDING"
+      ]
+    },
+    {
+      "case_id": "TXN_DATE-004",
+      "category": "transaction_date",
+      "description": "Transaction today",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "TXN_DATE-005",
+      "category": "transaction_date",
+      "description": "Transaction on founding date",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "CUST_ID-001",
+      "category": "customer_id",
+      "description": "Null customer_id (anonymous)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "CUST_ID-002",
+      "category": "customer_id",
+      "description": "Empty string customer_id",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "CUST_ID-003",
+      "category": "customer_id",
+      "description": "Valid customer_id",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "CUST_ID-004",
+      "category": "customer_id",
+      "description": "Chilean RUT format",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "SKU-001",
+      "category": "product_sku",
+      "description": "Null product_sku (service)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "SKU-002",
+      "category": "product_sku",
+      "description": "Empty string product_sku",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "SKU-003",
+      "category": "product_sku",
+      "description": "Valid product_sku",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "QTY-001",
+      "category": "quantity",
+      "description": "Null quantity",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "QTY-002",
+      "category": "quantity",
+      "description": "Zero quantity",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "QTY-003",
+      "category": "quantity",
+      "description": "Negative quantity",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NEGATIVE_VALUE",
+        "BELOW_MINIMUM"
+      ]
+    },
+    {
+      "case_id": "QTY-004",
+      "category": "quantity",
+      "description": "Very large quantity",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "QTY-005",
+      "category": "quantity",
+      "description": "Decimal quantity (kg)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "PRICE-001",
+      "category": "unit_price",
+      "description": "Null unit_price",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "PRICE-002",
+      "category": "unit_price",
+      "description": "Zero unit_price (free item)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "PRICE-003",
+      "category": "unit_price",
+      "description": "Negative unit_price",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NEGATIVE_VALUE",
+        "BELOW_MINIMUM"
+      ]
+    },
+    {
+      "case_id": "PRICE-004",
+      "category": "unit_price",
+      "description": "Very high unit_price",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "GROSS-001",
+      "category": "gross_amount",
+      "description": "Null gross_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "GROSS-002",
+      "category": "gross_amount",
+      "description": "Negative gross_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NEGATIVE_VALUE",
+        "BELOW_MINIMUM"
+      ]
+    },
+    {
+      "case_id": "DISC-001",
+      "category": "discount_amount",
+      "description": "Null discount_amount (no discount)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "DISC-002",
+      "category": "discount_amount",
+      "description": "Zero discount_amount",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "DISC-003",
+      "category": "discount_amount",
+      "description": "Negative discount_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NEGATIVE_VALUE",
+        "BELOW_MINIMUM"
+      ]
+    },
+    {
+      "case_id": "DISC-004",
+      "category": "discount_amount",
+      "description": "Discount exceeds gross_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "EXCESSIVE_DISCOUNT"
+      ]
+    },
+    {
+      "case_id": "DISC-005",
+      "category": "discount_amount",
+      "description": "100% discount (free after discount)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "NET-001",
+      "category": "net_amount",
+      "description": "Null net_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "NET-002",
+      "category": "net_amount",
+      "description": "Negative net_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NEGATIVE_VALUE",
+        "BELOW_MINIMUM"
+      ]
+    },
+    {
+      "case_id": "TAX-001",
+      "category": "tax_amount",
+      "description": "Null tax_amount (no tax)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "TAX-002",
+      "category": "tax_amount",
+      "description": "Zero tax_amount",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "TAX-003",
+      "category": "tax_amount",
+      "description": "Negative tax_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NEGATIVE_VALUE",
+        "BELOW_MINIMUM"
+      ]
+    },
+    {
+      "case_id": "TAX-004",
+      "category": "tax_amount",
+      "description": "19% IVA (Chile standard)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "TOTAL-001",
+      "category": "total_amount",
+      "description": "Null total_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD"
+      ]
+    },
+    {
+      "case_id": "TOTAL-002",
+      "category": "total_amount",
+      "description": "Negative total_amount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NEGATIVE_VALUE",
+        "BELOW_MINIMUM"
+      ]
+    },
+    {
+      "case_id": "TOTAL-003",
+      "category": "total_amount",
+      "description": "Zero total_amount (free)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "STATUS-PAID",
+      "category": "payment_status",
+      "description": "Valid payment_status: PAID",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "STATUS-PENDING",
+      "category": "payment_status",
+      "description": "Valid payment_status: PENDING",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "STATUS-OVERDUE",
+      "category": "payment_status",
+      "description": "Valid payment_status: OVERDUE",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "STATUS-PARTIAL",
+      "category": "payment_status",
+      "description": "Valid payment_status: PARTIAL",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "STATUS-CANCELLED",
+      "category": "payment_status",
+      "description": "Valid payment_status: CANCELLED",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "STATUS-NULL",
+      "category": "payment_status",
+      "description": "Null payment_status",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "STATUS-INVALID",
+      "category": "payment_status",
+      "description": "Invalid payment_status",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "INVALID_VALUE"
+      ]
+    },
+    {
+      "case_id": "PAY_DATE-001",
+      "category": "payment_date",
+      "description": "Null payment_date (not paid)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "PAY_DATE-002",
+      "category": "payment_date",
+      "description": "Payment date before transaction date",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "PAYMENT_BEFORE_TRANSACTION"
+      ]
+    },
+    {
+      "case_id": "PAY_DATE-003",
+      "category": "payment_date",
+      "description": "Same day payment",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "DUE_DATE-001",
+      "category": "due_date",
+      "description": "Null due_date (cash)",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "DUE_DATE-002",
+      "category": "due_date",
+      "description": "Due date before transaction date",
+      "expected_result": "WARNING",
+      "expected_issues": [
+        "DUE_DATE_BEFORE_TRANSACTION"
+      ]
+    },
+    {
+      "case_id": "DUE_DATE-003",
+      "category": "due_date",
+      "description": "Net 30 payment terms",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "FORMULA-001",
+      "category": "Formula Validation",
+      "description": "gross_amount mismatch with quantity \u00d7 unit_price",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "FORMULA_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "FORMULA-002",
+      "category": "Formula Validation",
+      "description": "net_amount mismatch with gross - discount",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "FORMULA_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "FORMULA-003",
+      "category": "Formula Validation",
+      "description": "total_amount mismatch with net + tax",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "FORMULA_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "FORMULA-004",
+      "category": "Formula Validation",
+      "description": "Formula within rounding tolerance",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "EDGE-001",
+      "category": "Edge Cases",
+      "description": "Multiple validation failures",
+      "expected_result": "REJECT",
+      "expected_issues": [
+        "NULL_IN_REQUIRED_FIELD",
+        "NEGATIVE_VALUE",
+        "FUTURE_DATE"
+      ]
+    },
+    {
+      "case_id": "EDGE-002",
+      "category": "Edge Cases",
+      "description": "Very small amounts",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "EDGE-003",
+      "category": "Edge Cases",
+      "description": "Minimal valid transaction",
+      "expected_result": "PASS",
+      "expected_issues": []
+    },
+    {
+      "case_id": "EDGE-004",
+      "category": "Edge Cases",
+      "description": "Payment status inconsistent with payment_date",
+      "expected_result": "WARNING",
+      "expected_issues": [
+        "STATUS_DATE_MISMATCH"
+      ]
+    }
+  ]
+}

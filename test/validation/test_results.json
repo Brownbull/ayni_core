@@ -1,0 +1,63 @@
+{
+  "summary": {
+    "total_tests": 69,
+    "passed": 66,
+    "failed": 3,
+    "pass_rate": 95.65217391304348
+  },
+  "validation_rule_coverage": {
+    "expected_rules": [
+      "BELOW_MINIMUM",
+      "DATE_BEFORE_FOUNDING",
+      "DUE_DATE_BEFORE_TRANSACTION",
+      "EXCESSIVE_DISCOUNT",
+      "FORMULA_MISMATCH",
+      "FUTURE_DATE",
+      "INVALID_VALUE",
+      "NEGATIVE_VALUE",
+      "NULL_IN_REQUIRED_FIELD",
+      "PAYMENT_BEFORE_TRANSACTION",
+      "STATUS_DATE_MISMATCH"
+    ],
+    "triggered_rules": [
+      "BELOW_MINIMUM",
+      "DATE_BEFORE_FOUNDING",
+      "DUE_DATE_BEFORE_TRANSACTION",
+      "EXCESSIVE_DISCOUNT",
+      "FORMULA_MISMATCH",
+      "FUTURE_DATE",
+      "INVALID_VALUE",
+      "NEGATIVE_VALUE",
+      "NULL_IN_REQUIRED_FIELD",
+      "PAYMENT_BEFORE_TRANSACTION",
+      "STATUS_DATE_MISMATCH"
+    ],
+    "missing_rules": [],
+    "unexpected_rules": [],
+    "coverage_rate": 100.0
+  },
+  "column_coverage": {
+    "tested_columns": [
+      "customer_id",
+      "discount_amount",
+      "due_date",
+      "gross_amount",
+      "net_amount",
+      "payment_date",
+      "payment_status",
+      "product_sku",
+      "quantity",
+      "tax_amount",
+      "total_amount",
+      "transaction_date",
+      "transaction_id",
+      "unit_price"
+    ],
+    "untested_columns": [],
+    "coverage_rate": 100.0
+  },
+  "failures": {
+    "Validation mismatch": 3
+  },
+  "timestamp": "2025-10-15T11:50:25.040365"
+}
