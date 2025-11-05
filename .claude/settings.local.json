@@ -7,7 +7,21 @@
       "Bash(ai-state/operations.log)",
       "Bash(cat:*)",
       "Skill(devops-orchestrator)",
-      "Bash(\"C:/Projects/play/ayni_core/ai-state/operations.log\")"
+      "Bash(\"C:/Projects/play/ayni_core/ai-state/operations.log\")",
+      "Skill(backend-orchestrator)",
+      "Bash(for dir in apps/authentication apps/companies apps/processing apps/analytics)",
+      "Bash(do if [ ! -f \"$dir/__init__.py\" ])",
+      "Bash(then touch \"$dir/__init__.py\")",
+      "Bash(echo:*)",
+      "Bash(else echo \"$dir/__init__.py exists\")",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(pip install:*)",
+      "Bash(for app in authentication companies processing analytics)",
+      "Bash(do echo \"=== $app ===\")",
+      "Bash(ls:*)",
+      "Bash(for dir in apps/authentication/migrations apps/companies/migrations apps/processing/migrations apps/analytics/migrations)",
+      "Bash(do touch \"$dir/__init__.py\")"
     ],
     "deny": [],
     "ask": []
