@@ -42,7 +42,18 @@
       "Skill(data-orchestrator)",
       "Bash(\"C:\\Projects\\play\\ayni_core\\ai-state\\operations.log\")",
       "Bash(\"C:\\Projects\\play\\ayni_core\\.gitignore\")",
-      "Bash(paste:*)"
+      "Bash(paste:*)",
+      "Skill(test-orchestrator)",
+      "Bash(tee:*)",
+      "Bash(pytest:*)",
+      "SlashCommand(/regression-test all)",
+      "SlashCommand(/regression-test:*)",
+      "Bash(test:*)",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
