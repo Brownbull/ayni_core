@@ -23,7 +23,9 @@
       "Bash(for dir in apps/authentication/migrations apps/companies/migrations apps/processing/migrations apps/analytics/migrations)",
       "Bash(do touch \"$dir/__init__.py\")",
       "Bash(playwright install:*)",
-      "Bash(timeout 5 bash:*)"
+      "Bash(timeout 5 bash:*)",
+      "Bash(NUL)",
+      "Bash(C:/Projects/play/ayni_core/ai-state/operations.log)"
     ],
     "deny": [],
     "ask": []
